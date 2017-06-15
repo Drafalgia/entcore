@@ -1,5 +1,5 @@
 /*
- * Copyright © WebServices pour l'Éducation, 2016
+ * Copyright © WebServices pour l'Éducation, 2017
  *
  * This file is part of ENT Core. ENT Core is a versatile ENT engine based on the JVM.
  *
@@ -27,15 +27,21 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class ColumnsMapper {
+public class ProfileColumnsMapper {
 
-	private final Map<String, Object> namesMapping;
+	private final Map<String, Map<String, Object>> profilesNamesMapping = new HashMap<>();
 
-	public ColumnsMapper(JsonObject additionnalsMappings) {
-		JsonObject mappings = new JsonObject()
+	public ProfileColumnsMapper() {
+		defaultInit();
+	}
+
+	private void defaultInit() {
+		JsonObject baseMappings = new JsonObject()
 				.put("id", "externalId")
 				.put("externalid", "externalId")
 				.put("idexterno", "externalId")
@@ -93,8 +99,9 @@ public class ColumnsMapper {
 				.put("codematiere", "fieldOfStudy")
 				.put("matiere", "fieldOfStudyLabels")
 				.put("persreleleve", "relative")
+				.put("datedenaissance", "birthDate")
+				.put("datenaissance", "birthDate")
 				.put("civilite", "title")
-				.put("civiliteresponsable", "title")
 				.put("telephone", "homePhone")
 				.put("telefono", "homePhone")
 				.put("phone", "homePhone")
@@ -119,7 +126,6 @@ public class ColumnsMapper {
 				.put("cp1", "zipCode")
 				.put("cp2", "zipCode2")
 				.put("ville", "city")
-				.put("communeresponsable", "city")
 				.put("commune", "city")
 				.put("commune1", "city")
 				.put("commune2", "city2")
@@ -137,15 +143,7 @@ public class ColumnsMapper {
 				.put("email", "email")
 				.put("correoelectronico", "email")
 				.put("courriel", "email")
-				.put("professeurprincipal", "headTeacher")
 				.put("sexe", "gender")
-				.put("attestationfournie", "ignore")
-				.put("autorisationsassociations", "ignore")
-				.put("autorisationassociations", "ignore")
-				.put("autorisationsphotos", "ignore")
-				.put("autorisationphoto", "ignore")
-				.put("decisiondepassage", "ignore")
-				.put("directeur", "ignore")
 				.put("ine", "ine")
 				.put("identifiantclasse", "ignore")
 				.put("dateinscription", "ignore")
@@ -155,16 +153,82 @@ public class ColumnsMapper {
 				.put("deptnaissance", "ignore")
 				.put("paysnaissance", "ignore")
 				.put("etat", "ignore")
-				.put("intervenant", "ignore");
-
-		mappings.mergeIn(additionnalsMappings);
-		namesMapping = mappings.getMap();
+				.put("intervenant", "ignore")
+				.put("ignore", "ignore");
+		JsonObject studentMappings = baseMappings.copy()
+				.put("nomeleve", "lastName")
+				.put("nomdusageeleve", "username")
+				.put("prenomeleve", "firstName")
+				.put("niveau", "level")
+				.put("regime", "accommodation")
+				.put("filiere", "sector")
+				.put("cycle", "sector")
+				.put("attestationfournie", "ignore")
+				.put("autorisationsassociations", "ignore")
+				.put("autorisationassociations", "ignore")
+				.put("autorisationsphotos", "ignore")
+				.put("autorisationphoto", "ignore")
+				.put("decisiondepassage", "ignore")
+				.put("boursier", "scholarshipHolder")
+				.put("transport", "transport")
+				.put("statut", "status")
+				.put("persreleleve", "relative");
+		JsonObject relativeMapping = baseMappings.copy()
+				.put("nomresponsable", "lastName")
+				.put("nomusageresponsable", "username")
+				.put("prenomresponsable", "firstName")
+				.put("idenfant", "childExternalId")
+				.put("childid", "childExternalId")
+				.put("childexternalid", "childExternalId")
+				.put("nomenfant", "childLastName")
+				.put("prenomenfant", "childFirstName")
+				.put("classeenfant", "childClasses")
+				.put("nomdusageenfant", "childUsername")
+				.put("nomdefamilleenfant", "childLastName")
+				.put("classesenfants", "childClasses")
+				.put("civiliteresponsable", "title")
+				.put("adresseresponsable", "address")
+				.put("cpresponsable", "zipCode")
+				.put("communeresponsable", "city");
+		JsonObject teacherMapping = baseMappings.copy()
+				.put("presencedevanteleves", "teaches")
+				.put("fonction", "functions")
+				.put("mef", "module")
+				.put("libellemef", "moduleName")
+				.put("codematiere", "fieldOfStudy")
+				.put("matiere", "fieldOfStudyLabels")
+				.put("professeurprincipal", "headTeacher")
+				.put("discipline", "classCategories")
+				.put("matiereenseignee", "subjectTaught")
+				.put("directeur", "ignore");
+		profilesNamesMapping.put("Teacher", teacherMapping.toMap());
+		profilesNamesMapping.put("Personnel", teacherMapping.toMap());
+		profilesNamesMapping.put("Student", studentMappings.toMap());
+		profilesNamesMapping.put("Relative", relativeMapping.toMap());
+		profilesNamesMapping.put("Guest", baseMappings.toMap());
 	}
 
-	void getColumsNames(String[] strings, List<String> columns, Handler<Message<JsonObject>> handler) {
+	public ProfileColumnsMapper(JsonObject mapping) {
+		if (mapping == null || mapping.size() == 0) {
+			defaultInit();
+		} else {
+			for (String profile: mapping.getFieldNames()) {
+				final JsonObject m = mapping.getObject(profile);
+				if (m != null) {
+					JsonObject j = new JsonObject().put("externalid", "externalId");
+					for (String attr : m.getFieldNames()) {
+						j.put(cleanKey(attr), m.getString(attr));
+					}
+					profilesNamesMapping.put(profile, j.toMap());
+				}
+			}
+		}
+	}
+
+	void getColumsNames(String profile, String[] strings, List<String> columns, Handler<Message<JsonObject>> handler) {
 		for (int j = 0; j < strings.length; j++) {
-			String cm = columnsNameMapping(strings[j]);
-			if (namesMapping.containsValue(cm)) {
+			String cm = columnsNameMapping(profile, strings[j]);
+			if (profilesNamesMapping.get(profile).containsValue(cm)) {
 				try {
 					columns.add(j, cm);
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -180,11 +244,11 @@ public class ColumnsMapper {
 		}
 	}
 
-	JsonArray getColumsNames(String[] strings, List<String> columns) {
+	JsonArray getColumsNames(String profile, String[] strings, List<String> columns) {
 		JsonArray errors = new fr.wseduc.webutils.collections.JsonArray();
 		for (int j = 0; j < strings.length; j++) {
-			String cm = columnsNameMapping(strings[j]);
-			if (namesMapping.containsValue(cm)) {
+			String cm = columnsNameMapping(profile, strings[j]);
+			if (profilesNamesMapping.get(profile).containsValue(cm)) {
 				columns.add(j, cm);
 			} else {
 				errors.add(cm);
@@ -194,11 +258,36 @@ public class ColumnsMapper {
 		return errors;
 	}
 
-	String columnsNameMapping(String columnName) {
-		final String key = Validator.removeAccents(columnName.trim().toLowerCase())
-				.replaceAll("\\s+", "").replaceAll("\\*", "").replaceAll("'", "").replaceFirst(CSVUtil.UTF8_BOM, "");
-		final Object attr = namesMapping.get(key);
+	String columnsNameMapping(String profile, String columnName) {
+		final String key = cleanKey(columnName);
+		final Object attr = profilesNamesMapping.get(profile).get(key);
 		return attr != null ? attr.toString() : key;
+	}
+
+	private static String cleanKey(String columnName) {
+		return Validator.removeAccents(columnName.trim().toLowerCase())
+				.replaceAll("\\s+", "").replaceAll("\\*", "").replaceAll("'", "").replaceFirst(CSVUtil.UTF8_BOM, "");
+	}
+
+	public JsonObject getColumsMapping(String profile, String[] strings) {
+		JsonObject mapping = new JsonObject();
+		for (String key : strings) {
+			String cm = columnsNameMapping(profile, key);
+			if (profilesNamesMapping.get(profile).containsValue(cm)) {
+				mapping.put(key, cm);
+			} else {
+				mapping.put(key, "");
+			}
+		}
+		return mapping;
+	}
+
+	public JsonObject availableFields() {
+		JsonObject j = new JsonObject();
+		for (String profile : profilesNamesMapping.keySet()) {
+			j.putArray(profile, new JsonArray(new HashSet<>(profilesNamesMapping.get(profile).values()).toArray()));
+		}
+		return j;
 	}
 
 }
