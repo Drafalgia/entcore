@@ -27,10 +27,7 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static fr.wseduc.webutils.Utils.isEmpty;
 
@@ -204,27 +201,27 @@ public class ProfileColumnsMapper {
 				.put("discipline", "classCategories")
 				.put("matiereenseignee", "subjectTaught")
 				.put("directeur", "ignore");
-		profilesNamesMapping.put("Teacher", teacherMapping.toMap());
-		profilesNamesMapping.put("Personnel", teacherMapping.toMap());
-		profilesNamesMapping.put("Student", studentMappings.toMap());
-		profilesNamesMapping.put("Relative", relativeMapping.toMap());
-		profilesNamesMapping.put("Guest", baseMappings.toMap());
+		profilesNamesMapping.put("Teacher", teacherMapping.getMap());
+		profilesNamesMapping.put("Personnel", teacherMapping.getMap());
+		profilesNamesMapping.put("Student", studentMappings.getMap());
+		profilesNamesMapping.put("Relative", relativeMapping.getMap());
+		profilesNamesMapping.put("Guest", baseMappings.getMap());
 	}
 
 	public ProfileColumnsMapper(JsonObject mapping) {
 		if (mapping == null || mapping.size() == 0) {
 			defaultInit();
 		} else {
-			for (String profile: mapping.getFieldNames()) {
-				final JsonObject m = mapping.getObject(profile);
+			for (String profile: mapping.fieldNames()) {
+				final JsonObject m = mapping.getJsonObject(profile);
 				if (m != null) {
 					JsonObject j = new JsonObject()
 							.put("externalid", "externalId")
 							.put("childexternalid", "childExternalId");
-					for (String attr : m.getFieldNames()) {
+					for (String attr : m.fieldNames()) {
 						j.put(cleanKey(attr), m.getString(attr));
 					}
-					profilesNamesMapping.put(profile, j.toMap());
+					profilesNamesMapping.put(profile, j.getMap());
 				}
 			}
 		}
@@ -278,7 +275,7 @@ public class ProfileColumnsMapper {
 		JsonObject mapping = new JsonObject();
 		for (String key : strings) {
 			if (isEmpty(key)) {
-				mapping.putString("", "ignore");
+				mapping.put("", "ignore");
 				continue;
 			}
 			String cm = columnsNameMapping(profile, key);
@@ -294,7 +291,8 @@ public class ProfileColumnsMapper {
 	public JsonObject availableFields() {
 		JsonObject j = new JsonObject();
 		for (String profile : profilesNamesMapping.keySet()) {
-			j.putArray(profile, new JsonArray(new HashSet<>(profilesNamesMapping.get(profile).values()).toArray()));
+			j.put(profile, new fr.wseduc.webutils.collections.JsonArray(
+					new ArrayList<>(new HashSet<>(profilesNamesMapping.get(profile).values()))));
 		}
 		return j;
 	}
