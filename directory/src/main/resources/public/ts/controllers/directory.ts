@@ -140,6 +140,7 @@ export const directoryController = ng.controller('DirectoryController',['$scope'
 			$scope.$apply();
 		},
 		myClass: async function(){
+			$scope.classView = true;
 			if($scope.network !== undefined){
 				return;
 			}
