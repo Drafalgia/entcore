@@ -689,7 +689,7 @@ public class CsvValidator extends CsvReport implements ImportValidator {
 						switch (profile) {
 							case "Relative":
 								boolean checkChildMapping = true;
-								JsonArray linkStudents = new fr.wseduc.webutils.collections.JsonArray();
+								//JsonArray linkStudents = new fr.wseduc.webutils.collections.JsonArray();
 								if (("Intitulé".equals(strings[0]) && "Adresse Organisme".equals(strings[1])) ||
 										("Intitulé".equals(strings[1]) && "Adresse Organisme".equals(strings[2]))) {
 									break csvParserWhile;
