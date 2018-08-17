@@ -1,4 +1,4 @@
-import { Component, Input, Output, ChangeDetectorRef, ElementRef, EventEmitter, OnInit } from '@angular/core'
+import { Component, Input, Output, ChangeDetectorRef, ElementRef, EventEmitter, OnInit, OnDestroy } from '@angular/core'
 
 export type MessageType = 'info' | 'success' | 'warning' | 'danger';
 
@@ -15,12 +15,12 @@ export const icons = {
         <article class="message is-{{type}}" [hidden]="hidden">
             <div *ngIf="header" class="message-header">
                 <p>
-                <i *ngIf="canHide()" (click)="hidden = true" class="fa fa-times-circle"></i>
+                <i *ngIf="canHide()" (click)="hide()" class="fa fa-times-circle"></i>
                     {{header | translate}}
                 </p>
             </div>
             <div class="message-body">
-                <i *ngIf="canHide() && !header" (click)="hidden = true" class="fa fa-times-circle"></i>
+                <i *ngIf="canHide() && !header" (click)="hide()" class="fa fa-times-circle"></i>
                 <p *ngFor="let message of messages"> 
                     <s5l [s5l-params]="message[1]">{{message[0]}}</s5l>
                 </p>
@@ -74,11 +74,16 @@ export class MessageBoxComponent implements OnInit {
         this._position = value;
     }
 
-    hidden:boolean = false ;
+    hidden:boolean = false;
+    @Output('onHide') hideEvent: EventEmitter<void>;
     canHide():boolean {
         if (this._position == 'absolute')
             return true; 
         return false;
+    }
+    hide(): void {
+        this.hidden = true;
+        this.hideEvent.emit();
     }
 
     ngOnInit():void { 
