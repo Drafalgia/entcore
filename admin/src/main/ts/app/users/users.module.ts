@@ -26,7 +26,8 @@ UserFunctionalGroupsSection,
 UserInfoSection,
 UserManualGroupsSection,
 UserRelativesSection,
-UserStructuresSection
+UserStructuresSection,
+UserQuotaSection
 } from './details/sections';
 import { UserlistFiltersService } from '../core/services';
 import { UserInfoService } from './details/sections/info/user-info.service';
@@ -58,7 +59,8 @@ import { globalStoreProvider } from '../core/store';
         UserDuplicatesSection,
         UserClassesSection,
         UserManualGroupsSection,
-        UserFunctionalGroupsSection
+        UserFunctionalGroupsSection,
+        UserQuotaSection
     ],
     providers: [
         ConfigResolver,
