@@ -1,7 +1,7 @@
 import { routes, ng } from 'entcore';
 import { directory } from './model';
 import { accountController } from './controllers/account';
-import { classAdminController } from './controllers/classAdmin';
+import { classAdminController } from './admin/controller';
 import { directoryController } from './controllers/directory';
 
 routes.define(function($routeProvider){
