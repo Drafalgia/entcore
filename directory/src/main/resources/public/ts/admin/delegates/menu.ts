@@ -1,46 +1,73 @@
 import { model, _, idiom as lang } from 'entcore';
-import { directory } from '../../model';
+import { EventDelegateScope } from "./events";
+import { ClassRoom, Network } from '../model';
+import { directoryService } from '../service';
 
 
 
-export interface MenuDelegateScope {
+export interface MenuDelegateScope extends EventDelegateScope {
 
-    selectClassroom(classroom: any): void;
-    selectedSchool(classroom: any): string;
+    selectClassroom(classroom: ClassRoom): void;
+    selectedSchool(classroom: ClassRoom): string;
     openClassList(): void;
     saveClassInfos(): void;
     belongsToMultipleSchools(): boolean;
     listOpened: boolean;
-    selectedClass: any;
-    
+    selectedClass: ClassRoom;
     // from others
-    safeApply(a?)
-    classrooms: any;
+    classrooms: ClassRoom[];
 
 }
 
 export function MenuDelegate($scope: MenuDelegateScope) {
+    // === Private methods
+    const setSelectedClassById = async function (classroomId: string) {
+        if (classroomId) {
+            model.me.preferences.save('selectedClass', classroomId);
+            const fetched = await directoryService.fetchClassById(classroomId, { withUsers: true });
+            $scope.selectedClass = fetched;
+            $scope.onClassLoaded.next(fetched);
+        } else {
+            console.warn("[Directory][Menu.setSelectedClassById] trying to select an undefined classroom: ", classroomId);
+            $scope.selectedClass = null;
+        }
+    }
+    const setSelectedClass = async function (classroom: ClassRoom) {
+        $scope.selectedClass = classroom;
+        setSelectedClassById(classroom.id);
 
-    $scope.classrooms = []
-
-    directory.network.on('classrooms-sync', function () {
-		$scope.classrooms = _.filter(directory.network.schools.allClassrooms(), function (classroom) {
-			return model.me.classes.indexOf(classroom.id) !== -1;
+    }
+    const getPreferenceClassId = function () {
+        return model.me.preferences.selectedClass;
+    }
+    // === Init attributes
+    $scope.classrooms = [];
+    let network: Network;
+    // === listen network changes to load my class
+    $scope.onNetworkLoaded.subscribe(network => {
+        $scope.classrooms = network.allClassrooms.filter((classroom) => {
+            return model.me.classes.indexOf(classroom.id) !== -1;
         });
         if ($scope.classrooms.length > 0) {
-            $scope.selectedClass = $scope.classrooms[0];
-            model.me.preferences.save('selectedClass', $scope.selectedClass.id);
+            setSelectedClass($scope.classrooms[0]);
         }
-		directory.classAdmin.sync();
     });
-
-    $scope.selectedSchool = function(classroom) {
-        return directory.network.schools.getSchool(classroom.id).name;
+    // === Init class from preference
+    const init = () => {
+        let myClassId = getPreferenceClassId();
+        if (!myClassId) {
+            myClassId = model.me.classes[0];
+        }
+        setSelectedClass(myClassId);
+    }
+    init();
+    // === Methods
+    $scope.selectedSchool = function (classroom) {
+        return network && network.getSchoolByClassId(classroom.id).name;
     }
 
-    $scope.selectClassroom = function(classroom) {
-        $scope.selectedClass = classroom;
-        model.me.preferences.save('selectedClass', $scope.selectedClass.id);
+    $scope.selectClassroom = function (classroom) {
+        setSelectedClass(classroom);
         $scope.listOpened = false;
     }
 
@@ -49,12 +76,11 @@ export function MenuDelegate($scope: MenuDelegateScope) {
     }
 
     $scope.saveClassInfos = function () {
-        directory.classAdmin.name = $scope.selectedClass.name;
-        directory.classAdmin.saveClassInfos();
+        directoryService.saveClassInfos($scope.selectedClass);
     }
 
     $scope.belongsToMultipleSchools = function () {
-        return directory.network.schools.all.length > 1;
+        return network.schools.length > 1;
     }
 
 }

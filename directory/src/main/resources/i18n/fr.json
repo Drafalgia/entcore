@@ -708,5 +708,7 @@
     "directory.block.users.warning" : "Attention : si vous bloquez tous les comptes, vous ne pourrez plus dissocier les utilisateurs qui seraient actuellement bloqués.",
     "directory.block.must.select.profile" : "Vous devez selectionner un profil",
     "directory.block.users.desc": "Vous pouvez bloquer des utilisateurs par profil. ",
-    "directory.blocked.link": "Consulter la liste des utilisateurs bloqués"
+    "directory.blocked.link": "Consulter la liste des utilisateurs bloqués",
+    "directory.blocked.label": "Bloqué",
+    "directory.resetted.label": "Code temporaire: [[resetCode]] (jusqu'au [[resetCodeDate]])"
 }

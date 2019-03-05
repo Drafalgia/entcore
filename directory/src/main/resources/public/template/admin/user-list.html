@@ -1,0 +1,65 @@
+<section class="twelve cell tabs row">
+    <header ng-class="selectedTabCss(kinds.Student)" ng-click="selectTab(kinds.Student)" translate content="directory.students">
+    </header>
+    <header ng-class="selectedTabCss(kinds.Relative)" ng-click="selectTab(kinds.Relative)" translate content="directory.relatives">
+    </header>
+    <header ng-class="selectedTabCss(kinds.Teacher)" ng-click="selectTab(kinds.Teacher)" translate content="userBook.teachers">
+    </header>
+    <header ng-class="selectedTabCss(kinds.Personnel)" ng-click="selectTab(kinds.Personnel)" translate content="directory.personnels">
+    </header>
+    <section class="medium-text">
+        <div class="row">
+            <article class="twelve cell vertical-spacing-twice list-view">
+                <table class="row">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" ng-model="userList.selectAll" ng-change="switchAll()" />
+                            </th>
+                            <th>
+                                <span ng-click="sortAsc(columns.Name)" style="cursor: pointer">UP</span>
+                                <span ng-click="sortDesc(columns.Name)" style="cursor: pointer">DOWN</span>
+                                <span translate content="directory.lastName"></span>
+                            </th>
+                            <th ng-if="isSelectedTab(kinds.Student)">
+                                <span ng-click="sortAsc(columns.Birthdate)" style="cursor: pointer">UP</span>
+                                <span ng-click="sortDesc(columns.Birthdate)" style="cursor: pointer">DOWN</span>
+                                <span translate content="directory.birthdate"></span>
+                            </th>
+                            <th>
+                                <span ng-click="sortAsc(columns.Login)" style="cursor: pointer">UP</span>
+                                <span ng-click="sortDesc(columns.Login)" style="cursor: pointer">DOWN</span>
+                                <span translate content="directory.login"></span>
+                            </th>
+                            <th>
+                                <span ng-click="sortAsc(columns.Activation)" style="cursor: pointer">UP</span>
+                                <span ng-click="sortDesc(columns.Activation)" style="cursor: pointer">DOWN</span>
+                                <span translate content="directory.activation"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5">
+                                <input type="text" i18n-placeholder="userBook.search" ng-model="userList.search" />
+                            </td>
+                        </tr>
+                        <tr ng-class="{ checked: user.selected, disabled: user.isDisabled }" ng-repeat="user in usersForType()">
+                            <td class="action-cell centered">
+                                <input type="checkbox" ng-model="user.selected" ng-if="!user.isMe" />
+                                <img ng-src="[[user.avatar48Uri]]" />
+                            </td>
+                            <td>
+                                <a ng-href="[[user.editUserUri]]" ng-if="!user.activationCode">[[user.safeDisplayName]]</a>
+                                <a ng-href="[[user.editUserInfosUri]]" ng-if="user.activationCode">[[user.safeDisplayName]]</a>
+                            </td>
+                            <td ng-if="isSelectedTab(kinds.Student)"><span ng-if="user.hasBirthDate">[[user.shortBirthDate]]</span></td>
+                            <td>[[user.login]]</td>
+                            <td ng-class="displayCodeCss(user)">[[displayCode(user)]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+        </div>
+    </section>
+</section>
