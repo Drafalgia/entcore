@@ -156,7 +156,7 @@ export class School extends Model {
                 this.users = data.users.map(u => new User(u));
             }
             if ((data as SchoolApiResult).classes) {
-                this.classrooms = (data as any).classes.map(u => new ClassRoom(u));
+                this.classrooms = (data as SchoolApiResult).classes.map(u => new ClassRoom(u));
             }
         }
     }

@@ -1,10 +1,10 @@
 import { model, idiom as lang, notify } from "entcore";
 import http from 'axios';
-import { ClassRoom, User, UserTypes, Network, School } from "./model";
+import { ClassRoom, User, UserTypes, Network, School, SchoolApiResult } from "./model";
 import moment = require("moment");
 
 export const directoryService = {
-    async fetchNetwork() {
+    async fetchNetwork({ withSchools = false } = {}) {
         const network = new Network;
         const res = await http.get('/userbook/structures');
         const schools = (res.data as School[]).map(s => new School(s));
@@ -22,7 +22,18 @@ export const directoryService = {
                 delete school.parents
         });
         network.schools = schools;
+        if (withSchools) {
+            const promises = network.schools.map(school => directoryService.fetchSchool(school.id, { forSchool: school }))
+            await Promise.all(promises);
+        }
         return network;
+    },
+    async fetchSchool(id: string, args: { forSchool?: School } = {}) {
+        const res = await http.get('/userbook/structure/' + id);
+        const resBody: SchoolApiResult = res.data;
+        const school = args.forSchool || new School();
+        school.updateData({ id, ...resBody });
+        return school;
     },
     async fetchClassById(id: string, { withUsers = false } = {}): Promise<ClassRoom> {
         const resHttp = await http.get(`/directory/class/${id}`);
@@ -142,8 +153,4 @@ export const directoryService = {
             });
         })
     }
-    //TODO
-    //model.on('preferences-updated', function(){
-    //    this.sync();
-    //}.bind(this));
 }

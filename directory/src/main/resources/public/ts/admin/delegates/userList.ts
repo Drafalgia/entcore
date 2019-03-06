@@ -47,7 +47,7 @@ export async function UserListDelegate($scope: UserListDelegateScope) {
         selectedTab: "Student",
         search: ''
     };
-    $scope.onClassChanged.subscribe((s) => {
+    $scope.onClassLoaded.subscribe((s) => {
         schoolClass = s;
         $scope.safeApply();
     })

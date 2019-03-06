@@ -4,9 +4,7 @@ import { ClassRoom, Network } from '../model';
 import { directoryService } from '../service';
 
 
-
 export interface MenuDelegateScope extends EventDelegateScope {
-
     selectClassroom(classroom: ClassRoom): void;
     selectedSchool(classroom: ClassRoom): string;
     openClassList(): void;
