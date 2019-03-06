@@ -15,33 +15,29 @@
 <portal>
 	<h1 data-reload><i class="admin"></i> <span translate content="classAdmin.title"></span></h1>
 
-	<article class="twelve cell" ng-if="classrooms.length > 1">
-		<div class="two cell reduce-block-eight" translate content="classAdmin.select.classroom">
-
+	<div class="centered twelve cell info vertical-spacing-twice" ng-if="classrooms.length === 0">
+		<i18n>classAdmin.noAttachment.message</i18n>
+	</div>
+	<article type="button" class="select-button left-text low-text row">
+		<div class="row" ng-if="classrooms.length !== 0">
+			<input class="right-spacing active" ng-model="selectedClass.name" complete-change="saveClassInfos()">
+			<span class="italic-text" ng-if="belongsToMultipleSchools()">[[selectedSchool(selectedClass)]]</span>
+			<i class="sort horizontal-margin top-spacing absolute-magnet" ng-click="openClassList()" ng-if="classrooms.length > 1"></i>
 		</div>
-		<div class="ten cell reduce-block-two">
-			<select ng-model="me.preferences.selectedClass"
-					ng-change="me.preferences.save('selectedClass')"
-					ng-options="classroom.id as classroom.name for classroom in classrooms"
-					class="twelve cell">
-			</select>
+		<div class="row" ng-if="classrooms.length === 0">
+			<span translate content="classAdmin.noAttachment"></span>
 		</div>
-	</article>
-
-	<section class="row">
-		<h1 class="text" translate content="classAdmin.globalParams"></h1>
-		<article class="twelve cell">
-			<div class="row reduce-block-three medium-text">
-				<div class="two cell reduce-block-eight" translate content="classAdmin.className"></div>
-				<div class="ten cell reduce-block-two">
-					<input type="text" ng-model="classAdmin.name"
-							complete-change="saveClassInfos()"
-							class="twelve cell inline-editing" />
+		<div class="found-users-list" ng-if="listOpened">
+			<div ng-repeat="classroom in classrooms" class="row autocomplete temp">
+				<div ng-click="selectClassroom(classroom)" class="row">
+					<a class="cell right-spacing">
+						<span>[[classroom.name]]</span>
+						<span class="italic-text" ng-if="belongsToMultipleSchools()">[[selectedSchool(classroom)]]</span>
+					</a>
 				</div>
 			</div>
-		</article>
-		<div class="row"></div>
-	</section>
+		</div>
+	</article>
 
 	<h1 class="text row vertical-spacing-twice" translate content="classAdmin.manageUsers"></h1>
 	<section class="twelve cell tabs row">

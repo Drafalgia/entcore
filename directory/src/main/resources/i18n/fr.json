@@ -31,6 +31,8 @@
     "classAdmin.importFile": "importez un fichier d'utilisateurs",
     "classAdmin.importType": "Le fichier CSV doit être un export ONDE.",
     "classAdmin.manageUsers": "Gestion des utilisateurs",
+    "classAdmin.noAttachment": "Aucun rattachement de classe",
+    "classAdmin.noAttachment.message" : "Vous n'êtes rattaché à <b>aucune classe</b>, pour visualiser les listes d'utilisateurs veuillez vous rattacher aux classes que vous voulez administrer ou contacter un administrateur.",
     "classAdmin.or": "ou",
     "classAdmin.select.classroom": "Classe à modifier",
     "classAdmin.title": "Paramétrage de la classe",

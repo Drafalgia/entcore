@@ -1,12 +1,15 @@
 import { ng, model, ui, notify, _, moment, $ } from 'entcore';
 import { directory } from '../model';
 import { UserListDelegate, UserListDelegateScope } from './delegates/userList';
+import { MenuDelegate, MenuDelegateScope } from './delegates/menu';
 
-export interface ClassAdminControllerScope extends UserListDelegateScope {
 
+export interface ClassAdminControllerScope extends UserListDelegateScope, MenuDelegateScope {
+	safeApply(a?);
 }
 export const classAdminController = ng.controller('ClassAdminController', ['$scope', ($scope) => {
 	UserListDelegate($scope);
+	MenuDelegate($scope);
 	directory.network.sync();
 	directory.network.one('schools.sync', function () {
 		directory.network.schools.forEach(function (school) {
@@ -21,13 +24,13 @@ export const classAdminController = ng.controller('ClassAdminController', ['$sco
 	$scope.me = model.me;
 	$scope.display = {};
 
-	directory.network.on('classrooms-sync', function () {
+	/*directory.network.on('classrooms-sync', function () {
 		$scope.classrooms = _.filter(directory.network.schools.allClassrooms(), function (classroom) {
 			return model.me.classes.indexOf(classroom.id) !== -1;
 		});
 		directory.classAdmin.sync();
 		$scope.$apply();
-	});
+	});*/
 
 	$scope.viewsContainers = {};
 	$scope.openView = function (view, name) {
@@ -121,10 +124,6 @@ export const classAdminController = ng.controller('ClassAdminController', ['$sco
 		}
 	};
 
-	$scope.saveClassInfos = function () {
-		directory.classAdmin.saveClassInfos();
-	};
-
 	$scope.importCSV = function () {
 		$scope.display.importing = true;
 		directory.classAdmin.importFile($scope.import.csv[0], $scope.display.show.toLowerCase());
@@ -199,5 +198,16 @@ export const classAdminController = ng.controller('ClassAdminController', ['$sco
 	$scope.checkAllActivated = function () {
 		return $scope.users.selection().every(function (u) { return u.activationCode == null })
 	}
+
+	$scope.safeApply = function (fn) {
+		const phase = this.$root.$$phase;
+		if (phase == '$apply' || phase == '$digest') {
+			if (fn && (typeof (fn) === 'function')) {
+				fn();
+			}
+		} else {
+			this.$apply(fn);
+		}
+	};
 
 }]);
