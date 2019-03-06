@@ -1,0 +1,16 @@
+<section class="toggle-buttons" ng-class="{ hide: !hasSelectedUsers() }">
+    <div class="toggle block-container">
+        <div class="row">
+            <button translate content="directory.resetPassword" ng-click="resetPasswords()" ng-if="selectedUsersAreNotActivated()"></button>
+            <button ng-click="blockUsers()" ng-if="selectedUsersAreNotBlocked()" translate
+                content="admin.block">
+            </button>
+            <button ng-click="unblockUsers()" ng-if="selectedUsersAreBlocked()" translate
+                content="admin.unblock">
+            </button>
+            <button ng-if="canRemoveSelection()" ng-click="confirmRemove()">
+                <i18n>remove</i18n>
+            </button>
+        </div>
+    </div>
+</section>

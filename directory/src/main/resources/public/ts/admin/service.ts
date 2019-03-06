@@ -51,9 +51,9 @@ export const directoryService = {
         });
         return sorted;
     },
-    async saveClassInfos(schoolClass: ClassRoom) {
-        await http.put('/directory/class/' + schoolClass.id, { name: schoolClass.name, level: schoolClass.level });
-        return schoolClass;
+    async saveClassInfos(classroom: ClassRoom) {
+        await http.put('/directory/class/' + classroom.id, { name: classroom.name, level: classroom.level });
+        return classroom;
     },
     async removeUsers(users: User[]) {
         await http.post('/directory/user/delete', { users: users.map(u => u.id) });

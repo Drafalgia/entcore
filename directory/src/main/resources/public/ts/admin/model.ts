@@ -39,6 +39,7 @@ export class User extends Model {
     profile: UserTypes;
     resetCode: string;
     activationCode: string;
+    source: "MANUAL" | "CLASS_PARAM" | "BE1D" | "CSV"
     mood: "default" = 'default';
     birthDate: string;
     firstName: string;

@@ -27,14 +27,16 @@ export interface UserListDelegateScope extends EventDelegateScope {
     displayCodeCss(user: User): string
     sortAsc(column: Column);
     sortDesc(column: Column);
+    onUserSelected()
     //
 }
 export async function UserListDelegate($scope: UserListDelegateScope) {
-    //INIT
+    // === Init template
+    template.open('userList', 'admin/user-list');
+    // === Init attributes
     let schoolClass: ClassRoom;
     let currentSortDir: "desc" | "asc" = "asc";
     let currentSort: Column = Column.Name;
-    template.open('userList', 'admin/user-list');
     $scope.columns = Column;
     $scope.kinds = {
         Personnel: "Personnel",
@@ -47,11 +49,12 @@ export async function UserListDelegate($scope: UserListDelegateScope) {
         selectedTab: "Student",
         search: ''
     };
+    // === Init listeners: listen class changes
     $scope.onClassLoaded.subscribe((s) => {
         schoolClass = s;
         $scope.safeApply();
     })
-    //
+    // === Private methods
     const sortUsers = (u1: User, u2: User) => {
         const getter = (u: User) => {
             if (!u) return "";
@@ -75,6 +78,10 @@ export async function UserListDelegate($scope: UserListDelegateScope) {
         }
         return res;
     }
+    const getSelectedUsers = function () {
+        return schoolClass.users.filter(u => u.type == $scope.userList.selectedTab && u.selected);
+    }
+    // === Methods
     $scope.sortAsc = function (column: Column) {
         currentSort = column;
         currentSortDir = "asc";
@@ -85,14 +92,12 @@ export async function UserListDelegate($scope: UserListDelegateScope) {
         currentSortDir = "desc";
         $scope.safeApply();
     }
-    //
     $scope.usersForType = function (type = $scope.userList.selectedTab) {
         if (!schoolClass) return [];
         const filteredByType = schoolClass.users.filter(u => u.type == type);
         const filteredBySearch = directoryService.findUsers($scope.userList.search, filteredByType);
         return filteredBySearch.sort(sortUsers);
     };
-    //
     $scope.isSelectedTab = function (kind) {
         if (!kind) {
             console.warn("[Directory][UserList.isSelectedTab] kind should not be null: ", kind)
@@ -115,8 +120,12 @@ export async function UserListDelegate($scope: UserListDelegateScope) {
             if ($scope.isSelectedTab(u.type)) {
                 u.selected = $scope.userList.selectAll;
             }
-        })
+        });
+        $scope.onSelectionChanged.next(getSelectedUsers());
     };
+    $scope.onUserSelected = function () {
+        $scope.onSelectionChanged.next(getSelectedUsers());
+    }
     $scope.displayCode = function (user) {
         if (user.blocked) {
             return lang.translate("directory.blocked.label");

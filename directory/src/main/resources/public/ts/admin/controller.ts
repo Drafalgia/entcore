@@ -3,20 +3,25 @@ import { UserListDelegate, UserListDelegateScope } from './delegates/userList';
 import { MenuDelegate, MenuDelegateScope } from './delegates/menu';
 import { EventDelegate } from "./delegates/events";
 import { directoryService } from './service';
+import { ActionsDelegate, ActionsDelegateScope } from './delegates/actions';
 
 
-export interface ClassAdminControllerScope extends UserListDelegateScope, MenuDelegateScope {
+export interface ClassAdminControllerScope extends UserListDelegateScope, MenuDelegateScope, ActionsDelegateScope {
 	safeApply(a?);
 }
 export const classAdminController = ng.controller('ClassAdminController', ['$scope', ($scope: ClassAdminControllerScope) => {
+	// === Init delegates
 	EventDelegate($scope);
 	UserListDelegate($scope);
 	MenuDelegate($scope);
-	//
-	directoryService.fetchNetwork().then(network => {
+	ActionsDelegate($scope);
+	// === Init
+	const init = async function () {
+		const network = await directoryService.fetchNetwork({ withSchools: true });
 		$scope.onNetworkLoaded.next(network);
 		console.log("[Directory][Controller] network is ready:", network);
-	});
+	}
+	init();
 	//TODO
 	/*
 		directory.network.sync();
@@ -217,15 +222,7 @@ export const classAdminController = ng.controller('ClassAdminController', ['$sco
 			$scope.newUser.uploadAvatar()
 		};
 	
-		$scope.checkUsersSource = function (selectedUsers) {
-			return _.filter(selectedUsers, function (user) {
-				return user.source != 'MANUAL' && user.source != 'CLASS_PARAM' && user.source != 'BE1D' && user.source != 'CSV'
-			}).length < 1;
-		}
 	
-		$scope.checkAllActivated = function () {
-			return $scope.users.selection().every(function (u) { return u.activationCode == null })
-		}
 	};
 	*/
 

@@ -10,6 +10,7 @@ export interface MenuDelegateScope extends EventDelegateScope {
     openClassList(): void;
     saveClassInfos(): void;
     belongsToMultipleSchools(): boolean;
+    hasSelectedClass(): boolean;
     listOpened: boolean;
     selectedClass: ClassRoom;
     // from others
@@ -41,7 +42,7 @@ export function MenuDelegate($scope: MenuDelegateScope) {
     // === Init attributes
     $scope.classrooms = [];
     let network: Network;
-    // === listen network changes to load my class
+    // === Init listener : listen network changes to load my class
     $scope.onNetworkLoaded.subscribe(network => {
         $scope.classrooms = network.allClassrooms.filter((classroom) => {
             return model.me.classes.indexOf(classroom.id) !== -1;
@@ -50,7 +51,7 @@ export function MenuDelegate($scope: MenuDelegateScope) {
             setSelectedClass($scope.classrooms[0]);
         }
     });
-    // === Init class from preference
+    // === Init: load class from preference
     const init = () => {
         let myClassId = getPreferenceClassId();
         if (!myClassId) {
@@ -63,22 +64,22 @@ export function MenuDelegate($scope: MenuDelegateScope) {
     $scope.selectedSchool = function (classroom) {
         return network && network.getSchoolByClassId(classroom.id).name;
     }
-
     $scope.selectClassroom = function (classroom) {
         setSelectedClass(classroom);
         $scope.listOpened = false;
     }
-
     $scope.openClassList = function () {
         $scope.listOpened = !$scope.listOpened;
     }
-
     $scope.saveClassInfos = function () {
         directoryService.saveClassInfos($scope.selectedClass);
     }
 
     $scope.belongsToMultipleSchools = function () {
-        return network.schools.length > 1;
+        return network && network.schools.length > 1;
+    }
+    $scope.hasSelectedClass = function () {
+        return !!$scope.selectedClass;
     }
 
 }

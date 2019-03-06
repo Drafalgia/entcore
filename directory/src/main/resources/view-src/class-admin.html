@@ -41,14 +41,9 @@
 			</div>
 		</article>
 		<h1 class="text row vertical-spacing-twice" translate content="classAdmin.manageUsers"></h1>
-		<hr />
-		<hr />
-		<hr />
-		<hr />
-		<hr />
 		<!--END HEADER -->
 		<!--TABLE -->
-		<container template="userList"></container>
+		<container template="userList" ng-if="hasSelectedClass()"></container>
 		<!--END TABLE -->
 	</portal>
 	<container template="lightboxes"></container>

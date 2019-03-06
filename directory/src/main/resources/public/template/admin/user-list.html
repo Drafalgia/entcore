@@ -46,7 +46,7 @@
                         </tr>
                         <tr ng-class="{ checked: user.selected, disabled: user.isDisabled }" ng-repeat="user in usersForType()">
                             <td class="action-cell centered">
-                                <input type="checkbox" ng-model="user.selected" ng-if="!user.isMe" />
+                                <input type="checkbox" ng-model="user.selected" ng-if="!user.isMe" ng-change="onUserSelected()"/>
                                 <img ng-src="[[user.avatar48Uri]]" />
                             </td>
                             <td>
