@@ -31,7 +31,7 @@
 			</div>
 			<div class="found-users-list" ng-if="listOpened">
 				<div ng-repeat="classroom in classrooms" class="row autocomplete temp">
-					<div ng-click="selectClassroom(classroom)" class="row">
+					<div ng-click="selectClassroom(classroom)" class="row" ng-if="classroom.id !== selectedClass.id">
 						<a class="cell right-spacing">
 							<span>[[classroom.name]]</span>
 							<span class="italic-text" ng-if="belongsToMultipleSchools()">[[selectedSchool(classroom)]]</span>
@@ -42,19 +42,19 @@
 		</article>
 
 		<section class="class-admin__options">
-			<a class="button-big" href="#" ng-click="openLightbox('admin/create-user')">
+			<a class="button-big" ng-class="{ disabled: classrooms.length === 0 }" href="#" ng-click="openLightbox('admin/create-user')">
 				<i18n>classAdmin.add.users</i18n>
 				<i class="users"></i>
 			</a>
-			<a class="button-big" href="#" ng-click="openLightbox('admin/massmailing')">
+			<a class="button-big" ng-class="{ disabled: classrooms.length === 0 }" href="#" ng-click="openLightbox('admin/massmailing')">
 				<i18n>classAdmin.massmailing</i18n>
 				<i class="file"></i>
 			</a>
-			<a class="button-big" href="#" ng-click="openLightbox('admin/apps-visibility')">
+			<a class="button-big" ng-class="{ disabled: classrooms.length === 0 || true }" href="#" ng-click="openLightbox('admin/apps-visibility')">
 				<i18n>classAdmin.apps.visibility</i18n>
 				<i class="lock"></i>
 			</a>
-			<a class="button-big disabled" href="#" ng-click="openLightbox('admin/year-transition')">
+			<a class="button-big" ng-class="{ disabled: classrooms.length === 0 || true }" href="#" ng-click="openLightbox('admin/year-transition')">
 				<i18n>classAdmin.year.transition</i18n>
 				<i class="lock"></i>
 			</a>

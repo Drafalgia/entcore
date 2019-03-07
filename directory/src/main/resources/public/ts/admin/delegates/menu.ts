@@ -33,7 +33,7 @@ export function MenuDelegate($scope: MenuDelegateScope) {
     }
     const setSelectedClass = async function (classroom: ClassRoom) {
         $scope.selectedClass = classroom;
-        setSelectedClassById(classroom.id);
+        classroom && setSelectedClassById(classroom.id);
 
     }
     const getPreferenceClassId = function () {
