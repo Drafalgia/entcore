@@ -8,7 +8,7 @@
             <button ng-click="unblockUsers()" ng-if="selectedUsersAreBlocked()" translate
                 content="admin.unblock">
             </button>
-            <button ng-if="canRemoveSelection()" ng-click="confirmRemove()">
+            <button ng-if="canRemoveSelection()" ng-click="openLightbox('admin/actions/delete')">
                 <i18n>remove</i18n>
             </button>
         </div>

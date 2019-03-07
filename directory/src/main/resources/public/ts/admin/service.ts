@@ -43,7 +43,7 @@ export const directoryService = {
         }
         return schoolClass;
     },
-    async  fetchUsersForClass(): Promise<User[]> {
+    async fetchUsersForClass(): Promise<User[]> {
         const resHttp = await http.get('/directory/class/' + model.me.preferences.selectedClass + '/users');
         const res: User[] = resHttp.data;
         const sorted = res.map(r => new User(r)).sort((a, b) => {

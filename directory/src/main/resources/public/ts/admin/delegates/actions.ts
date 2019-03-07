@@ -1,6 +1,7 @@
-import { User } from "../model";
+import { User, ClassRoom } from "../model";
 import { EventDelegateScope } from "./events";
-import { template } from "entcore";
+import { template, notify } from "entcore";
+import { directoryService } from '../service';
 
 export interface ActionsDelegateScope extends EventDelegateScope {
     hasSelectedUsers(): boolean;
@@ -9,6 +10,9 @@ export interface ActionsDelegateScope extends EventDelegateScope {
     selectedUsersAreNotBlocked(): boolean;
     confirmRemove();
     canRemoveSelection(): boolean
+    // from others
+    selectedClass: ClassRoom;
+    selectClassroom(classroom: ClassRoom): void;
 }
 export function ActionsDelegate($scope: ActionsDelegateScope) {
     // === Init template
@@ -36,5 +40,14 @@ export function ActionsDelegate($scope: ActionsDelegateScope) {
         return selection.filter((user) => {
             return user.source != 'MANUAL' && user.source != 'CLASS_PARAM' && user.source != 'BE1D' && user.source != 'CSV'
         }).length == 0;
+    }
+    $scope.confirmRemove = function () {
+        directoryService.removeUsers(selection).then(() => {
+            $scope.selectClassroom($scope.selectedClass);
+            // selection is emptied as all selected users were removed
+            selection.splice(0,selection.length);
+            notify.info('classAdmin.delete.success');
+        }).catch(() => notify.error('classAdmin.delete.error'));
+        template.close('lightbox');
     }
 }
