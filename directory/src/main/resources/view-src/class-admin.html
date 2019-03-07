@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-
- -->
-
 <html ng-controller="ClassAdminController">
 
 <head>
@@ -13,18 +9,18 @@
 	<script type="text/ng-template" id="empty"></script>
 </head>
 
-<body class="account">
+<body class="account class-admin">
 	<portal>
 		<!--HEADER-->
 		<h1 data-reload><i class="admin"></i> <span translate content="classAdmin.title"></span></h1>
 		<div class="centered twelve cell info vertical-spacing-twice" ng-if="classrooms.length === 0">
 			<i18n>classAdmin.noAttachment.message</i18n>
 		</div>
-		<article type="button" class="select-button left-text low-text row">
+		<section type="button" class="select-button left-text low-text row">
 			<div class="row" ng-if="classrooms.length !== 0">
-				<input class="right-spacing active" ng-model="selectedClass.name" complete-change="saveClassInfos()">
+				<input type="text" class="right-spacing active class-admin__input twelve" ng-model="selectedClass.name" complete-change="saveClassInfos()">
 				<span class="italic-text" ng-if="belongsToMultipleSchools()">[[selectedSchool(selectedClass)]]</span>
-				<i class="sort horizontal-margin top-spacing absolute-magnet" ng-click="openClassList()" ng-if="classrooms.length > 1"></i>
+				<i class="sort horizontal-margin-twice top-spacing-twice absolute-magnet" ng-click="openClassList()" ng-if="classrooms.length > 1"></i>
 			</div>
 			<div class="row" ng-if="classrooms.length === 0">
 				<span translate content="classAdmin.noAttachment"></span>
@@ -39,7 +35,7 @@
 					</div>
 				</div>
 			</div>
-		</article>
+		</section>
 
 		<section class="class-admin__options">
 			<a class="button-big" ng-class="{ disabled: classrooms.length === 0 }" href="#" ng-click="openLightbox('admin/create-user')">
@@ -60,7 +56,6 @@
 			</a>
 		</section>
 
-		<h1 class="text row vertical-spacing-twice" translate content="classAdmin.manageUsers"></h1>
 		<!--END HEADER -->
 		<!--TABLE -->
 		<container template="userList" ng-if="hasSelectedClass()"></container>

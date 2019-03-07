@@ -17,37 +17,56 @@
                                 <input type="checkbox" ng-model="userList.selectAll" ng-change="switchAll()" />
                             </th>
                             <th>
-                                <span ng-click="sortAsc(columns.Name)" style="cursor: pointer">UP</span>
-                                <span ng-click="sortDesc(columns.Name)" style="cursor: pointer">DOWN</span>
-                                <span translate content="directory.lastName"></span>
+                              <!-- TODO : Il faudrait adapter ce bout de code pour qu'on est le même effet sur les fleches que sur l'espace documentaire : Quand tu clique sur une des deux flèches, l'autre se "désactive" (aka une opacity a 0.2) grâce à la class .icon-off
+                                J'ai trouvé ce bout de code sur l'espace doc, je vous le laisse pour l'exemple :
+                                <i ng-class="{'icon-off':!isOrderedAsc('modified')}"> -->
+                                <span class="sortable">
+                                    <span class="icons right-spacing">
+                                        <i ng-click="sortAsc(columns.Name)" class="arrow"></i>
+                                        <i ng-click="sortDesc(columns.Name)" class="arrow bottom"></i>
+                                    </span>
+                                    <span translate content="directory.lastName"></span>
+                                </span>
                             </th>
                             <th ng-if="isSelectedTab(kinds.Student)">
-                                <span ng-click="sortAsc(columns.Birthdate)" style="cursor: pointer">UP</span>
-                                <span ng-click="sortDesc(columns.Birthdate)" style="cursor: pointer">DOWN</span>
-                                <span translate content="directory.birthdate"></span>
+                                <span class="sortable">
+                                    <span class="icons right-spacing">
+                                        <i ng-click="sortAsc(columns.Birthdate)" class="arrow"></i>
+                                        <i ng-click="sortDesc(columns.Birthdate)" class="arrow bottom"></i>
+                                    </span>
+                                    <span translate content="directory.birthdate"></span>
+                                </span>
                             </th>
                             <th>
-                                <span ng-click="sortAsc(columns.Login)" style="cursor: pointer">UP</span>
-                                <span ng-click="sortDesc(columns.Login)" style="cursor: pointer">DOWN</span>
-                                <span translate content="directory.login"></span>
+                              <span class="sortable">
+                                  <span class="icons right-spacing">
+                                      <i ng-click="sortAsc(columns.Login)" class="arrow"></i>
+                                      <i ng-click="sortDesc(columns.Login)" class="arrow bottom"></i>
+                                  </span>
+                                  <span translate content="directory.login"></span>
+                              </span>
                             </th>
                             <th>
-                                <span ng-click="sortAsc(columns.Activation)" style="cursor: pointer">UP</span>
-                                <span ng-click="sortDesc(columns.Activation)" style="cursor: pointer">DOWN</span>
-                                <span translate content="directory.activation"></span>
+                              <span class="sortable">
+                                  <span class="icons right-spacing">
+                                      <i ng-click="sortAsc(columns.Activation)" class="arrow"></i>
+                                      <i ng-click="sortDesc(columns.Activation)" class="arrow bottom"></i>
+                                  </span>
+                                  <span translate content="directory.activation"></span>
+                              </span>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td colspan="5">
-                                <input type="text" i18n-placeholder="userBook.search" ng-model="userList.search" />
+                                <input type="text" class="class-admin__input--no-border twelve" i18n-placeholder="userBook.search" ng-model="userList.search" />
                             </td>
                         </tr>
-                        <tr ng-class="{ checked: user.selected, disabled: user.isDisabled }" ng-repeat="user in usersForType()">
-                            <td class="action-cell centered">
+                        <tr class="class-admin__list" ng-class="{ checked: user.selected, disabled: user.isDisabled }" ng-repeat="user in usersForType()">
+                            <td class="centered">
                                 <input type="checkbox" ng-model="user.selected" ng-if="!user.isMe" ng-change="onUserSelected()"/>
-                                <img ng-src="[[user.avatar48Uri]]" />
+                                <img class="class-admin__avatar" ng-src="[[user.avatar48Uri]]" />
                             </td>
                             <td>
                                 <a ng-href="[[user.editUserUri]]" ng-if="!user.activationCode">[[user.safeDisplayName]]</a>
