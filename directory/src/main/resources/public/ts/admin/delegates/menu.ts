@@ -43,7 +43,8 @@ export function MenuDelegate($scope: MenuDelegateScope) {
     $scope.classrooms = [];
     let network: Network;
     // === Init listener : listen network changes to load my class
-    $scope.onNetworkLoaded.subscribe(network => {
+    $scope.onNetworkLoaded.subscribe(loaded => {
+        network = loaded;
         $scope.classrooms = network.allClassrooms.filter((classroom) => {
             return model.me.classes.indexOf(classroom.id) !== -1;
         });
