@@ -40,6 +40,26 @@
 				</div>
 			</div>
 		</article>
+
+		<section class="class-admin__options">
+			<a class="button-big" href="#" ng-click="openLightbox('admin/create-user')">
+				<i18n>classAdmin.add.users</i18n>
+				<i class="users"></i>
+			</a>
+			<a class="button-big" href="#" ng-click="openLightbox('admin/massmailing')">
+				<i18n>classAdmin.massmailing</i18n>
+				<i class="file"></i>
+			</a>
+			<a class="button-big" href="#" ng-click="openLightbox('admin/apps-visibility')">
+				<i18n>classAdmin.apps.visibility</i18n>
+				<i class="lock"></i>
+			</a>
+			<a class="button-big disabled" href="#" ng-click="openLightbox('admin/year-transition')">
+				<i18n>classAdmin.year.transition</i18n>
+				<i class="lock"></i>
+			</a>
+		</section>
+
 		<h1 class="text row vertical-spacing-twice" translate content="classAdmin.manageUsers"></h1>
 		<!--END HEADER -->
 		<!--TABLE -->

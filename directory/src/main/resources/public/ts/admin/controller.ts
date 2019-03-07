@@ -1,4 +1,4 @@
-import { ng, model, ui, notify, _, moment, $ } from 'entcore';
+import { ng, template, model, ui, notify, _, moment, $ } from 'entcore';
 import { UserListDelegate, UserListDelegateScope } from './delegates/userList';
 import { MenuDelegate, MenuDelegateScope } from './delegates/menu';
 import { EventDelegate } from "./delegates/events";
@@ -8,6 +8,10 @@ import { ActionsDelegate, ActionsDelegateScope } from './delegates/actions';
 
 export interface ClassAdminControllerScope extends UserListDelegateScope, MenuDelegateScope, ActionsDelegateScope {
 	safeApply(a?);
+	openLightbox(path: string): void;
+	lightboxDelegateClose: () => boolean;
+	setLightboxDelegateClose(f: () => boolean);
+	resetLightboxDelegateClose(): void;
 }
 export const classAdminController = ng.controller('ClassAdminController', ['$scope', ($scope: ClassAdminControllerScope) => {
 	// === Init delegates
@@ -22,6 +26,21 @@ export const classAdminController = ng.controller('ClassAdminController', ['$sco
 		console.log("[Directory][Controller] network is ready:", network);
 	}
 	init();
+	setTimeout(() => {
+		template.open('lightboxes', 'admin/lightboxes');
+	}, 500);
+	// === Methods
+	$scope.lightboxDelegateClose = () => false;
+	$scope.setLightboxDelegateClose = function (f) {
+		$scope.lightboxDelegateClose = f;
+	}
+	$scope.resetLightboxDelegateClose = function () {
+		$scope.lightboxDelegateClose = () => false;
+
+	}
+	$scope.openLightbox = function (path) {
+		template.open('lightbox', path);
+	}
 	//TODO
 	/*
 		directory.network.sync();
